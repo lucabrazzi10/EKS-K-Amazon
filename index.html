@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RGS Core Demo UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #0f172a;
+      color: #e5e7eb;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 960px;
+      width: 100%;
+      background: #020617;
+      border-radius: 16px;
+      padding: 24px 24px 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid #1e293b;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+      padding: 16px 18px 20px;
+      border-radius: 12px;
+      background: #020617;
+      border: 1px solid #1e293b;
+    }
+
+    .section-title {
+      font-size: 16px;
+      margin: 0 0 8px;
+    }
+
+    .section-desc {
+      margin: 0 0 16px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px 16px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      font-size: 12px;
+      color: #9ca3af;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    input {
+      width: 100%;
+      padding: 7px 9px;
+      background: #020617;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      color: #e5e7eb;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px #38bdf8;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      color: #0f172a;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #4b5563;
+      color: #e5e7eb;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      border: 1px solid #1f2937;
+      color: #9ca3af;
+    }
+
+    .pill-green {
+      border-color: #22c55e33;
+      color: #bbf7d0;
+      background: #052e16;
+    }
+
+    .pill-red {
+      border-color: #ef444433;
+      color: #fecaca;
+      background: #450a0a;
+    }
+
+    .pill-blue {
+      border-color: #38bdf833;
+      color: #bae6fd;
+      background: #082f49;
+    }
+
+    .status-text {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    .status-text strong {
+      color: #e5e7eb;
+    }
+
+    .output {
+      margin-top: 8px;
+      font-size: 13px;
+      background: #020617;
+      border-radius: 8px;
+      border: 1px solid #1e293b;
+      padding: 8px 10px;
+      max-height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .output-line {
+      margin: 0 0 4px;
+    }
+
+    .output-line:last-child {
+      margin-bottom: 0;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #111827;
+      color: #9ca3af;
+      border: 1px solid #1f2937;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+
+    .small {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .error {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #fecaca;
+    }
+
+    .success {
+      color: #bbf7d0;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 16px;
+      }
+      .container {
+        padding: 16px 14px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>RGS Core Demo UI</h1>
+    <p class="subtitle">
+      Start a session and spin a demo slot game against the <strong>rgs-core</strong> API running on localhost:8000.
+    </p>
+
+    <div class="section" id="session-section">
+      <div class="row">
+        <div>
+          <h2 class="section-title">1. Session</h2>
+          <p class="section-desc">Create a demo session for an operator + player. The backend initializes the player with a fake balance.</p>
+        </div>
+        <div class="pill pill-blue" id="session-status-pill">No active session</div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="operatorId">Operator ID</label>
+          <input id="operatorId" type="text" value="op-demo">
+        </div>
+        <div>
+          <label for="externalPlayerId">External Player ID</label>
+          <input id="externalPlayerId" type="text" value="player-12345">
+        </div>
+        <div>
+          <label for="currency">Currency</label>
+          <input id="currency" type="text" value="USD">
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 8px;">
+        <div>
+          <button id="btnStartSession">Start Session</button>
+        </div>
+        <div class="status-text" id="sessionInfoText">
+          No session yet.
+        </div>
+      </div>
+
+      <div class="output" id="sessionOutput"></div>
+      <div class="error" id="sessionError"></div>
+    </div>
+
+    <div class="section" id="game-section">
+      <div class="row">
+        <div>
+          <h2 class="section-title">2. Game Spin</h2>
+          <p class="section-desc">Use the active session to spin a demo game. A simple RNG decides if the round wins or loses.</p>
+        </div>
+        <div class="pill pill-green" id="balance-pill">Balance: –</div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="gameId">Game ID</label>
+          <input id="gameId" type="text" value="demo-slot">
+        </div>
+        <div>
+          <label for="betAmount">Bet Amount</label>
+          <input id="betAmount" type="number" step="0.01" value="5.0">
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 8px;">
+        <div>
+          <button id="btnSpin">Spin</button>
+        </div>
+        <div class="small">Spins will fail if you don’t have an active session.</div>
+      </div>
+
+      <div class="output" id="spinOutput"></div>
+      <div class="error" id="spinError"></div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">3. API Targets</h2>
+      <p class="section-desc">This UI assumes your backend container is running on <code>http://localhost:8000</code> with the routes we defined.</p>
+      <div>
+        <span class="tag">GET /health</span>
+        <span class="tag">POST /session/start</span>
+        <span class="tag">POST /games/{game_id}/spin</span>
+      </div>
+      <p class="small" style="margin-top: 10px;">
+        You can hit these directly with curl or Postman as well. The UI is just a thin wrapper for interviews and quick demos.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "http://localhost:8000";
+
+    let currentSessionId = null;
+    let currentPlayerId = null;
+    let currentCurrency = "USD";
+    let currentBalance = null; // we track this client-side from spin responses
+
+    const elOperatorId = document.getElementById("operatorId");
+    const elExternalPlayerId = document.getElementById("externalPlayerId");
+    const elCurrency = document.getElementById("currency");
+    const elSessionOutput = document.getElementById("sessionOutput");
+    const elSessionError = document.getElementById("sessionError");
+    const elSessionInfoText = document.getElementById("sessionInfoText");
+    const elSessionStatusPill = document.getElementById("session-status-pill");
+    const elBalancePill = document.getElementById("balance-pill");
+
+    const elGameId = document.getElementById("gameId");
+    const elBetAmount = document.getElementById("betAmount");
+    const elSpinOutput = document.getElementById("spinOutput");
+    const elSpinError = document.getElementById("spinError");
+
+    const btnStartSession = document.getElementById("btnStartSession");
+    const btnSpin = document.getElementById("btnSpin");
+
+    function setSessionState(active) {
+      if (active) {
+        elSessionStatusPill.textContent = "Session active";
+        elSessionStatusPill.classList.remove("pill-blue");
+        elSessionStatusPill.classList.add("pill-green");
+      } else {
+        elSessionStatusPill.textContent = "No active session";
+        elSessionStatusPill.classList.remove("pill-green");
+        elSessionStatusPill.classList.add("pill-blue");
+        currentBalance = null;
+        updateBalancePill();
+      }
+    }
+
+    function updateBalancePill() {
+      if (currentBalance == null) {
+        elBalancePill.textContent = "Balance: –";
+      } else {
+        elBalancePill.textContent = "Balance: " + currentBalance.toFixed(2) + " " + currentCurrency;
+      }
+    }
+
+    async function startSession() {
+      elSessionError.textContent = "";
+      elSessionOutput.textContent = "";
+      btnStartSession.disabled = true;
+
+      const payload = {
+        operator_id: elOperatorId.value || "op-demo",
+        external_player_id: elExternalPlayerId.value || "player-12345",
+        currency: elCurrency.value || "USD"
+      };
+
+      try {
+        const res = await fetch(API_BASE + "/session/start", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error("HTTP " + res.status + " – " + text);
+        }
+
+        const data = await res.json();
+
+        currentSessionId = data.session_id;
+        currentPlayerId = data.player_id;
+        currentCurrency = data.currency || "USD";
+        // Backend uses 1000.0 as initial; treat as starting balance for demo.
+        currentBalance = 1000.0;
+        setSessionState(true);
+        updateBalancePill();
+
+        elSessionInfoText.innerHTML =
+          'Session: <strong>' + currentSessionId + "</strong> | Player: <strong>" +
+          currentPlayerId + "</strong> | Currency: <strong>" + currentCurrency + "</strong>";
+
+        const line = document.createElement("div");
+        line.className = "output-line success";
+        line.textContent = "[OK] Session started at " + new Date(data.created_at * 1000).toLocaleString();
+        elSessionOutput.appendChild(line);
+
+      } catch (err) {
+        console.error(err);
+        elSessionError.textContent = "Failed to start session: " + err.message;
+        setSessionState(false);
+      } finally {
+        btnStartSession.disabled = false;
+      }
+    }
+
+    async function spinGame() {
+      elSpinError.textContent = "";
+
+      if (!currentSessionId || !currentPlayerId) {
+        elSpinError.textContent = "No active session. Start a session first.";
+        return;
+      }
+
+      const bet = parseFloat(elBetAmount.value || "0");
+      if (isNaN(bet) || bet <= 0) {
+        elSpinError.textContent = "Bet amount must be > 0.";
+        return;
+      }
+
+      btnSpin.disabled = true;
+
+      const gameId = elGameId.value || "demo-slot";
+      const payload = {
+        session_id: currentSessionId,
+        player_id: currentPlayerId,
+        bet_amount: bet,
+        currency: currentCurrency
+      };
+
+      try {
+        const res = await fetch(API_BASE + "/games/" + encodeURIComponent(gameId) + "/spin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error("HTTP " + res.status + " – " + text);
+        }
+
+        const data = await res.json();
+
+        currentBalance = data.new_balance;
+        updateBalancePill();
+
+        const line = document.createElement("div");
+        line.className = "output-line";
+        const ts = new Date(data.timestamp * 1000).toLocaleTimeString();
+        const outcome = data.win_amount > 0
+          ? "WIN " + data.win_amount.toFixed(2)
+          : "LOSS";
+        line.textContent =
+          "[" + ts + "] Round " + data.round_id +
+          " | Game: " + data.game_id +
+          " | Bet: " + data.bet_amount.toFixed(2) +
+          " | " + outcome +
+          " | New balance: " + data.new_balance.toFixed(2);
+        elSpinOutput.prepend(line);
+
+      } catch (err) {
+        console.error(err);
+        elSpinError.textContent = "Spin failed: " + err.message;
+      } finally {
+        btnSpin.disabled = false;
+      }
+    }
+
+    btnStartSession.addEventListener("click", startSession);
+    btnSpin.addEventListener("click", spinGame);
+
+    setSessionState(false);
+    updateBalancePill();
+  </script>
+</body>
+</html>
